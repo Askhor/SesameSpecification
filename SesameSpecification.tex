@@ -29,12 +29,26 @@
 \setlength{\parindent}{0pt}
 
 \newtheorem{remark}{Remark}
+\newtheorem{lemma}{Lemma}
+\newtheorem{method}{Method}
 
-\newcommand{\mas}{Mark-and-Sweep}
+% Sets
+\newcommand{\cardinality}[1]{|{#1}|}
+
+% GC
+\newcommand{\mas}{Mark-and-Sweep }
+\DeclareMathOperator{\problemdeg}{pdeg}
+\DeclareMathOperator{\finedeg}{fdeg}
+
+% Graphs
 \newcommand{\PREV}[1]{P({#1})}
 \newcommand{\NEXT}[1]{N({#1})}
 \newcommand{\reachable}[1]{\text{reach}({#1})}
 \newcommand{\rootset}{\text{root}}
+\DeclareMathOperator{\indeg}{indeg}
+\DeclareMathOperator{\outdeg}{outdeg}
+
+% General commands
 \newcommand{\code}[1]{\tcbox[on line, left=0mm,top=0.7mm,right=0mm,bottom=0.7mm]{\texttt{#1}}}
 
 \begin{document}
@@ -80,7 +94,43 @@
 		Why do we have objects representing stack contexts? They ease the fomalisation of garbage collection.
 	\end{remark}
 
-	This set we will denote by $\rootset$
+	This set we will denote by $\rootset$. Now define for a Graph $(G, e)$ and a subset of nodes $X ⊂ G$ the set of nodes reachable starting from $X$:
+	\begin{equation*}
+		\begin{split}
+			X &⊂ \reachable X \\
+			N(\reachable X) &⊂ \reachable X \\
+		\end{split}
+	\end{equation*}
+
+	\medskip
+
+	The problem of garbage collection can now be stated as determining the set $O \setminus \reachable \rootset$. One classic and performant solution is tracking the indegree of each node $nϵO$:
+
+	\begin{equation*}
+		\indeg(n) ≔ \cardinality{\set{n': (n', n)ϵr}}
+	\end{equation*}
+
+	This method is called reference counting and if $\indeg(o)=0$ for $oϵO$, then we deallocate $o$. This of couse has the problem of cycles, is however performant, instant and distributes the load of GC.
+
+	\medskip
+
+	This is where the type graph $T$ comes in. We can formulate the following lemma:
+
+	\begin{lemma}
+		If $o_1,\cdots, o_n ϵ O$ is a cycle in $O$ then $π(o_1), \cdots, π(o_n) ϵ T$ is a cycle in $T$.
+	\end{lemma}
+
+	Now we can partition the type graph into the set of nodes that are (non-trivially) reachable from themselves (the problematic nodes $P$) and the rest (the fine nodes). This partition also extends to the objects via taking the type of each object (using $π$).
+
+	\medskip
+
+	We can now define two new types of node-degree: The problem degree $\problemdeg(o)$, the $\indeg$ counting only from problematic objects and ${\finedeg(o)=\indeg(o)-\problemdeg(o)}$ counting only from fine objects.
+
+	\medskip
+
+	\begin{method}
+		At all times and for all objects we keep track of $\finedeg(o)$ and $\problemdeg(o)$. If both are $0$, the object is no longer referenced and can be deleted. However if only $\finedeg(o)=0$ then we apply another method to detect whether the object is garbage.
+	\end{method}
 
 	\subsubsection{Something something \mas}
 

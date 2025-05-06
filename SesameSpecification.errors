@@ -1,11 +1,12 @@
 /usr/local/texlive/2024/bin/x86_64-linux/texfot: invoking: pdflatex -synctex=1 -interaction=nonstopmode SesameSpecification.tex
 This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex)
-Package newunicodechar Warning: Redefining Unicode character on input line 14.
-Package newunicodechar Warning: Redefining Unicode character on input line 16.
-Package newunicodechar Warning: Redefining Unicode character on input line 20.
-Package newunicodechar Warning: Redefining Unicode character on input line 40.
-Package newunicodechar Warning: Redefining Unicode character on input line 53.
-Package newunicodechar Warning: Redefining Unicode character on input line 57.
-Package newunicodechar Warning: Redefining Unicode character on input line 58.
-Package newunicodechar Warning: Redefining Unicode character on input line 59.
-Output written on SesameSpecification.pdf (2 pages, 134107 bytes).
+Package newunicodechar Warning: Redefining Unicode character on input line 17.
+Package newunicodechar Warning: Redefining Unicode character on input line 19.
+Package newunicodechar Warning: Redefining Unicode character on input line 23.
+Package newunicodechar Warning: Redefining Unicode character on input line 43.
+Package newunicodechar Warning: Redefining Unicode character on input line 56.
+Package newunicodechar Warning: Redefining Unicode character on input line 60.
+Package newunicodechar Warning: Redefining Unicode character on input line 61.
+Package newunicodechar Warning: Redefining Unicode character on input line 62.
+Overfull \hbox (6.37537pt too wide) in paragraph at lines 127--128
+Output written on SesameSpecification.pdf (2 pages, 148294 bytes).
