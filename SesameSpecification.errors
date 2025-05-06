@@ -1,0 +1,11 @@
+/usr/local/texlive/2024/bin/x86_64-linux/texfot: invoking: pdflatex -synctex=1 -interaction=nonstopmode SesameSpecification.tex
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex)
+Package newunicodechar Warning: Redefining Unicode character on input line 14.
+Package newunicodechar Warning: Redefining Unicode character on input line 16.
+Package newunicodechar Warning: Redefining Unicode character on input line 20.
+Package newunicodechar Warning: Redefining Unicode character on input line 40.
+Package newunicodechar Warning: Redefining Unicode character on input line 53.
+Package newunicodechar Warning: Redefining Unicode character on input line 57.
+Package newunicodechar Warning: Redefining Unicode character on input line 58.
+Package newunicodechar Warning: Redefining Unicode character on input line 59.
+Output written on SesameSpecification.pdf (2 pages, 134107 bytes).
