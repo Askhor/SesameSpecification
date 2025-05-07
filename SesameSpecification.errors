@@ -8,5 +8,8 @@ Package newunicodechar Warning: Redefining Unicode character on input line 56.
 Package newunicodechar Warning: Redefining Unicode character on input line 60.
 Package newunicodechar Warning: Redefining Unicode character on input line 61.
 Package newunicodechar Warning: Redefining Unicode character on input line 62.
-Overfull \hbox (6.37537pt too wide) in paragraph at lines 127--128
-Output written on SesameSpecification.pdf (2 pages, 148294 bytes).
+Overfull \hbox (6.37537pt too wide) in paragraph at lines 77--78
+! Undefined control sequence.
+<recently read> \pdeg 
+l.99 ...ot have to look at objects $o$ with $\pdeg
+Output written on SesameSpecification.pdf (6 pages, 155415 bytes).

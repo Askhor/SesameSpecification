@@ -35,6 +35,11 @@
 % Sets
 \newcommand{\cardinality}[1]{|{#1}|}
 
+% Names
+\newcommand{\clang}{\code{C}}
+\newcommand{\cpplang}{\code{C++}}
+\newcommand{\bertlang}{\code{Bert}}
+
 % GC
 \newcommand{\mas}{Mark-and-Sweep }
 \DeclareMathOperator{\problemdeg}{pdeg}
@@ -49,94 +54,18 @@
 \DeclareMathOperator{\outdeg}{outdeg}
 
 % General commands
-\newcommand{\code}[1]{\tcbox[on line, left=0mm,top=0.7mm,right=0mm,bottom=0.7mm]{\texttt{#1}}}
+%\newcommand{\code}[1]{\tcbox[on line, left=0mm,top=0.7mm,right=0mm,bottom=0.7mm]{\texttt{#1}} }
+\newcommand{\code}[1]{\texttt{#1}}
 
 \begin{document}
 	\maketitle
 
-	\section{Introduction}
 
-	This document specifies the Bert language, associated tools and the runtime implementation of it.
+	\include{Introduction}
 
-	\section{The Language}
+	\include{Language}
 
-	The specification of syntax and of semantics go here.
+	\include{Implementation}
 
-	\section{The Implementation}
-
-
-	\subsection{Gabage Collection}
-
-	On the language level the garbage collection will resemble the popular \mas schemes used in f.e. Java. However in the implementation and in the code emitted by the compiler there is a lot of optimization possibe.
-
-	\subsubsection{Avoiding \mas}
-
-	The difficulty in garbage collection lies in finding cycles in the reference graph. Now parts of this process can be done at compile time on the type graph. For this, some formalism will prove useful: Denote the reference digraph (w. self-reference) by $(O,r)$ and the type digraph by $(T, r')$. Now the canonical projection map $π$ will be a graph homomorphism:
-	\begin{equation*}
-		π: O → T
-	\end{equation*}
-	This sends and object of type $t$ to the type $t$ and an arrow (alt. a reference) $(a,b)$ with objects of types $t_a,t_b$ to $(t_a, t_b)$.
-
-	\medskip
-
-	Now we will introduce standared graph operations: \\
-	For $oϵO$, $\PREV o$ ($\NEXT o$) denotes the previous (next) elements for $o$. Formally:
-	\begin{equation*}
-		\begin{split}
-			\PREV o &\coloneq \set{x ϵ O | (x,o) ϵ r} \\
-			\NEXT o &\coloneq \set{x ϵ O | (o,x) ϵ r}
-		\end{split}
-	\end{equation*}
-
-	For reachability we must define the root set, the set of all elements which are by definition reachable, for example if they are stored in a global variable (not applicable for Bert) or if they represent a stack context.
-
-	\begin{remark}
-		Why do we have objects representing stack contexts? They ease the fomalisation of garbage collection.
-	\end{remark}
-
-	This set we will denote by $\rootset$. Now define for a Graph $(G, e)$ and a subset of nodes $X ⊂ G$ the set of nodes reachable starting from $X$:
-	\begin{equation*}
-		\begin{split}
-			X &⊂ \reachable X \\
-			N(\reachable X) &⊂ \reachable X \\
-		\end{split}
-	\end{equation*}
-
-	\medskip
-
-	The problem of garbage collection can now be stated as determining the set $O \setminus \reachable \rootset$. One classic and performant solution is tracking the indegree of each node $nϵO$:
-
-	\begin{equation*}
-		\indeg(n) ≔ \cardinality{\set{n': (n', n)ϵr}}
-	\end{equation*}
-
-	This method is called reference counting and if $\indeg(o)=0$ for $oϵO$, then we deallocate $o$. This of couse has the problem of cycles, is however performant, instant and distributes the load of GC.
-
-	\medskip
-
-	This is where the type graph $T$ comes in. We can formulate the following lemma:
-
-	\begin{lemma}
-		If $o_1,\cdots, o_n ϵ O$ is a cycle in $O$ then $π(o_1), \cdots, π(o_n) ϵ T$ is a cycle in $T$.
-	\end{lemma}
-
-	Now we can partition the type graph into the set of nodes that are (non-trivially) reachable from themselves (the problematic nodes $P$) and the rest (the fine nodes). This partition also extends to the objects via taking the type of each object (using $π$).
-
-	\medskip
-
-	We can now define two new types of node-degree: The problem degree $\problemdeg(o)$, the $\indeg$ counting only from problematic objects and ${\finedeg(o)=\indeg(o)-\problemdeg(o)}$ counting only from fine objects.
-
-	\medskip
-
-	\begin{method}
-		At all times and for all objects we keep track of $\finedeg(o)$ and $\problemdeg(o)$. If both are $0$, the object is no longer referenced and can be deleted. However if only $\finedeg(o)=0$ then we apply another method to detect whether the object is garbage.
-	\end{method}
-
-	\subsubsection{Something something \mas}
-
-	This will either specify the implementation of \mas or an aternative scheme.
-
-	\section{Tools}
-
-	Here we specify usage of the \code{ernie} command and others.
+	\include{Tools}
 \end{document}

@@ -1,0 +1,103 @@
+%no-autocompile
+
+\section{The Implementation}
+
+\subsection{The Binary Format}
+
+As the language is supposed to be as compatible with {\clang} and {\cpplang} as possible, it must also adopt the standard os dependent library formats. However there is also a need to be able to support the {\bertlang} specific features.
+
+\medskip
+
+Here is a list of things the binary format should satify:
+\begin{enumerate}
+	\item Drop-In replacement for equivalent {\clang} libraries
+	\item Recognisable by tools as a file conforming to this standard
+	\item Accessibility from {\clang}. Code from other languages should be able to easily access exported function of the library
+\end{enumerate}
+
+\subsection{Gabage Collection}
+
+On the language level the garbage collection will resemble the popular \mas schemes used in f.e. Java. However in the implementation and in the code emitted by the compiler there is a lot of optimization possibe.
+
+\subsubsection{Avoiding \mas}
+
+The difficulty in garbage collection lies in finding cycles in the reference graph. Now parts of this process can be done at compile time on the type graph. For this, some formalism will prove useful: Denote the reference digraph (w. self-reference) by $(O,r)$ and the type digraph by $(T, r')$. Now the canonical projection map $π$ will be a graph homomorphism:
+\begin{equation*}
+	π: O → T
+\end{equation*}
+This sends and object of type $t$ to the type $t$ and an arrow (alt. a reference) $(a,b)$ with objects of types $t_a,t_b$ to $(t_a, t_b)$.
+
+\medskip
+
+Now we will introduce standared graph operations: \\
+For $oϵO$, $\PREV o$ ($\NEXT o$) denotes the previous (next) elements for $o$. Formally:
+\begin{equation*}
+	\begin{split}
+		\PREV o &\coloneq \set{x ϵ O | (x,o) ϵ r} \\
+		\NEXT o &\coloneq \set{x ϵ O | (o,x) ϵ r}
+	\end{split}
+\end{equation*}
+
+For reachability we must define the root set, the set of all elements which are by definition reachable, for example if they are stored in a global variable (not applicable for Bert) or if they represent a stack context.
+
+\begin{remark}
+	Why do we have objects representing stack contexts? They ease the fomalisation of garbage collection.
+\end{remark}
+
+This set we will denote by $\rootset$. Now define for a Graph $(G, e)$ and a subset of nodes $X ⊂ G$ the set of nodes reachable starting from $X$:
+\begin{equation*}
+	\begin{split}
+		X &⊂ \reachable X \\
+		N(\reachable X) &⊂ \reachable X \\
+	\end{split}
+\end{equation*}
+
+\medskip
+
+The problem of garbage collection can now be stated as determining the set $O \setminus \reachable \rootset$. One classic and performant solution is tracking the indegree of each node $nϵO$:
+
+\begin{equation*}
+	\indeg(n) ≔ \cardinality{\set{n': (n', n)ϵr}}
+\end{equation*}
+
+This method is called reference counting and if $\indeg(o)=0$ for $oϵO$, then we deallocate $o$. This of couse has the problem of cycles, is however performant, instant and distributes the load of GC.
+
+\medskip
+
+This is where the type graph $T$ comes in. We can formulate the following lemma:
+
+\begin{lemma}
+	If $o_1,\cdots, o_n ϵ O$ is a cycle in $O$ then $π(o_1), \cdots, π(o_n) ϵ T$ is a cycle in $T$.
+\end{lemma}
+
+Now we can partition the type graph into the set of nodes that are (non-trivially) reachable from themselves (the problematic nodes $P$) and the rest (the fine nodes). This partition also extends to the objects via taking the type of each object (using $π$).
+
+\medskip
+
+We can now define two new types of node-degree: The problem degree $\problemdeg(o)$, the $\indeg$ counting only from problematic objects and ${\finedeg(o)=\indeg(o)-\problemdeg(o)}$ counting only from fine objects.
+
+\medskip
+
+\begin{method}
+	At all times and for all objects we keep track of $\finedeg(o)$ and $\problemdeg(o)$. If both are $0$, the object is no longer referenced and can be deleted. However if only $\finedeg(o)=0$ then we apply another method to detect whether the object is garbage.
+\end{method}
+
+\subsubsection{Modified \mas}
+
+This section will use notation developed in the previous section
+
+\begin{lemma}
+	\begin{equation*}
+		\finedeg(o) > 0 ⇒ oϵ\reachable{\rootset}
+	\end{equation*}
+\end{lemma}
+
+This allows for multiple optimisations. First, non-counting based garbage collection systems only need to check objects with $\finedeg(o) = 0$.
+
+\medskip
+
+Secondly, we do not have to look at objects $o$ with $\pdeg(o) = 0$, as the objects $p$ with $\problemdeg(p) > 0$ and $\finedeg(p) > 0$ will be our new root set.
+
+\begin{method}
+	Perform normal \mas on the graph $P$
+\end{method}
