@@ -14,8 +14,111 @@ In the grammar in this section any whitespace shall denote an arbitrary positive
 	<Definition> ::= <Function Definition>
 		\alt <Type Definition>
 
-	<Type Definition> ::=
+%	<Type Definition> ::=
 \end{grammar}
+
+\subsection{Semantic}
+
+\subsubsection{Types and Values}
+
+\newcommand{\values}{\text{Values}}
+
+A bert programm consists of type definitions and function definitions. There is an important difference between abstract and concrete types. Concrete types are either primitive types or structured types where all type parameters are specified.
+
+\medskip
+
+Let $\values(T)$ denote the set of possible values for a given type $T$. For a primitive type $T$ with $n$ bits this is $\values(T) = \set{0,1}^n$ and for a concrete structured type with $n$ fields of types $F_1, \cdots, F_n$ this is $\values(T) = \bigtimes_{k=1}^n \values(F_k)$.
+
+\medskip
+
+A value is a tupel $(T, v)$ where $T$ is a concrete type and $vϵ\values(T)$.
+
+Ein Wert ist ein Tupel $(T, v)$, wobei $T$ ein konkreter Typ ist und $v$ ein Datenwert
+mit $v ϵ \values(T)$.
+
+\subsubsection{Local Variables}
+
+The setting and overriding of a variable for a value-assignment $f$ will be denoted by
+\begin{equation*}
+	f[n, v](x) \coloneq
+	\begin{cases}
+		v & \text{if } n = x \\
+		f(x) & \text{otherwise}
+	\end{cases}
+\end{equation*}
+
+\subsubsection{Evaluation of Expressions}
+
+\newcommand{\evaluate}{\text{eval}}
+
+The evaluation function $\evaluate(e, b)$ assigns to every expression $e$ and every variable-assignment $b$ a value $v$ and a new variable-assignment $b'$. Formally
+\begin{equation*}
+	\evaluate(e,b) = (v,b')
+\end{equation*}
+
+\medskip
+
+Is $n$ a variable and $e$ an expression (with $|n = e|$ an assignment expression), then
+\begin{equation*}
+	\evaluate(|n=e|, b) \coloneq (\evaluate(e, b), b[n, \evaluate(e,b)])
+\end{equation*}
+
+% What? Was drückt das aus? Das Auswerten von Tupeln?
+%Are $v_1, \cdots, v_k$ values and $e_{k+1}, \cdots, e_n$ then
+%Sind $(v1, v2, …, vk)$ Werte, $(e(k+1), …, en)$ Ausdrücke, so ist
+%$f(|v1(v2, …, vk, e(k+1), …, en)|, b) := (f(|v1(v2, …, vk, v(k+1), e(k+2), …, en)|, b'), b')$,
+%wobei $f(e(k+1), b) = (v(k+1), b')$
+
+
+\subsubsection{Include and Include-Like things}
+
+\paragraph{Local file include (\julialang, \clang, \cpplang)}
+
+\subparagraph{Properties}
+
+\begin{enumerate}
+	\item A file is evaluated where the include is used
+\end{enumerate}
+
+\subparagraph{Pros}
+
+\begin{enumerate}
+	\item Easy separation of modules (namespaces) into multiple files
+	\item Modules can be defined in a single file and can be centrally renamed
+\end{enumerate}
+
+\subparagraph{Cons}
+
+\begin{enumerate}
+	\item Most files cannot be considered in isolation as its module context is missing
+\end{enumerate}
+
+\paragraph{Global file dependencies (\javalang)}
+
+\subparagraph{Properties}
+
+\begin{enumerate}
+	\item Dependencies between files
+	\item Circular dependencies will be resolved
+	\item Global evaluation of files, making definition globally available
+	\item Module definition are joined (???)
+\end{enumerate}
+
+\subparagraph{Pros}
+
+\begin{enumerate}
+	\item Files are separate and isolated as no external modules exist (???)
+\end{enumerate}
+
+\subparagraph{Cons}
+
+\begin{enumerate}
+	\item Joining of modules is a security concern as injecting code into standard modules is possible (how???)
+	\item Modules cannot be easily renamed (yes, they can????) 
+\end{enumerate}
+
+%- Zusammenführen von Modulen stellt eine Sicherheitslücke dar, da in Standardmodule eingegriffen werden kann
+%- Module können nicht leicht umbenannt werden, wenn sie auf mehrere Dateien aufgeteilt sind
 
 \subsection{Modules}
 
